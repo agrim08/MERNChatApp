@@ -3,6 +3,7 @@ const authRouter = require("./routes/auth");
 const dotenv = require("dotenv");
 const connectDb = require("./config/db");
 const cookieParser = require("cookie-parser");
+const messageRouter = require("./routes/message");
 
 const app = express();
 
@@ -13,6 +14,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 
 app.use("/api/auth", authRouter);
+app.use("/api/message", messageRouter);
 
 app.listen(PORT, () => {
   try {
