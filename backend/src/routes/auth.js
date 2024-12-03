@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/signup", sigup);
 router.post("/login", login);
 router.post("/logout", logout);
-router.patch("update-profile", protectAuth, updateProfile);
+router.put("/update-profile", protectAuth, updateProfile);
 router.get("/check", protectAuth, checkAuth);
 
 module.exports = router;
