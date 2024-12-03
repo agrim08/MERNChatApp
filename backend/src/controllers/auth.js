@@ -2,35 +2,51 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const cloudinary = require("../config/cloudinary");
 
-const sigup = async (req, res) => {
+const signup = async (req, res) => {
   const { email, fullName, password, profilePic } = req.body;
 
   try {
+    // Check for required fields
     if (!email || !fullName || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    const user = await User.findOne({ email });
-    if (user) {
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
+    // Hash the password
     const passwordHash = await bcrypt.hash(password, 10);
 
+    // Create a new user
     const newUser = new User({
       email,
       fullName,
       password: passwordHash,
       profilePic,
     });
-    await newUser.save();
+    if (newUser) {
+      const token = await newUser.getJwt();
+      res.cookie("token", token);
+      await newUser.save();
 
-    res.status(201).json({
-      _id: newUser._id,
-      fullName: newUser.fullName,
-      email: newUser.email,
-      profilePic: newUser.profilePic,
-    });
+      // Respond with user details and token
+      res.status(201).json({
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        profilePic: newUser.profilePic,
+        token,
+      });
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
+    }
+
+    // Generate JWT token
   } catch (error) {
+    // Handle server error
     return res.status(500).json({ error: error.message });
   }
 };
@@ -103,7 +119,7 @@ const checkAuth = (req, res) => {
 };
 
 module.exports = {
-  sigup,
+  signup,
   login,
   logout,
   updateProfile,

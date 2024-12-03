@@ -1,6 +1,6 @@
 const express = require("express");
 const {
-  sigup,
+  signup,
   login,
   logout,
   updateProfile,
@@ -10,7 +10,7 @@ const protectAuth = require("../middleware/protectAuth");
 
 const router = express.Router();
 
-router.post("/signup", sigup);
+router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 router.put("/update-profile", protectAuth, updateProfile);
