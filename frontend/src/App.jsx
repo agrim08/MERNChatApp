@@ -10,12 +10,13 @@ import Settings from "./components/Settings";
 import { useAuthStore } from "./store/userAuthStore";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
   console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
@@ -34,7 +35,7 @@ function App() {
         />
         <Route
           path="/signup"
-          element={!authUser ? <SignUp /> : <Navigate to="/" />}
+          element={!authUser ? <SignUp /> : <Navigate to="/login" />}
         />
         <Route
           path="/login"
@@ -49,6 +50,7 @@ function App() {
           element={authUser ? <Settings /> : <Navigate to="/login" />}
         />
       </Routes>
+      <Toaster />
       <Footer />
     </>
   );

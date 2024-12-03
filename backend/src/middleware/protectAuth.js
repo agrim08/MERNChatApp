@@ -4,7 +4,7 @@ const JWT_KEY = process.env.JWT_KEY;
 
 const protectAuth = async (req, res, next) => {
   try {
-    const { token } = res.cookie;
+    const { token } = req.cookies;
     if (!token)
       return res.status(404).json({ message: "Invalid Authorization" });
 

@@ -9,8 +9,9 @@ import {
   MessageSquare,
   User,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import AuthImagePattern from "./AuthImagePatter";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,9 +21,34 @@ const SignUp = () => {
     password: "",
   });
   const { signup, isSigningUp } = useAuthStore();
-  const validateForm = () => {};
+
+  const validateForm = () => {
+    if (!formData.fullName.trim())
+      return toast.error("Please enter your full name");
+    if (!formData.email.trim())
+      return toast.error("Please enter your email address");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      return toast.error("please enter a valid email");
+    if (!formData.password.trim())
+      return toast.error("Please enter your password");
+    if (
+      !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(formData.password)
+    )
+      return toast.error("Please enter a strong password");
+
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const isSuccess = validateForm();
+
+    if (isSuccess === true) {
+      signup(formData);
+      {
+        <Navigate to="/login" />;
+      }
+    }
   };
 
   return (

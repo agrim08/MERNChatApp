@@ -22,9 +22,14 @@ const sigup = async (req, res) => {
       password: passwordHash,
       profilePic,
     });
-
     await newUser.save();
-    res.status(201).json({ message: "user created successfully" });
+
+    res.status(201).json({
+      _id: newUser._id,
+      fullName: newUser.fullName,
+      email: newUser.email,
+      profilePic: newUser.profilePic,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
