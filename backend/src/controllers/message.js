@@ -107,4 +107,4 @@ const sendMessage = async (req, res) => {
   }
 };
 
-module.exports = { getUsersForSideBar, getMessages, sendMessage };
+export { getUsersForSideBar, getMessages, sendMessage };

@@ -118,10 +118,4 @@ const checkAuth = (req, res) => {
   }
 };
 
-module.exports = {
-  signup,
-  login,
-  logout,
-  updateProfile,
-  checkAuth,
-};
+export { signup, login, logout, updateProfile, checkAuth };

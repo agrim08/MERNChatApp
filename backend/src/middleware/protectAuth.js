@@ -25,4 +25,4 @@ const protectAuth = async (req, res, next) => {
   }
 };
 
-module.exports = protectAuth;
+export default protectAuth;
