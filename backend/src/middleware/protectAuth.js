@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 const JWT_KEY = process.env.JWT_KEY;
 

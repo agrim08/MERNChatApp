@@ -1,8 +1,8 @@
 import sharp from "sharp";
-import User from "../models/user";
-import Message from "../models/message";
-import cloudinary from "../config/cloudinary";
-import { getReceiverSocketId, io } from "../config/socket";
+import User from "../models/user.js";
+import Message from "../models/message.js";
+import cloudinary from "../config/cloudinary.js";
+import { getReceiverSocketId, io } from "../config/socket.js";
 
 const getUsersForSideBar = async (req, res) => {
   try {

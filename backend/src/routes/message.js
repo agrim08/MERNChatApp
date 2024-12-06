@@ -1,5 +1,5 @@
 import express from "express";
-import protectAuth from "../middleware/protectAuth";
+import protectAuth from "../middleware/protectAuth.js";
 import {
   getUsersForSideBar,
   getMessages,
