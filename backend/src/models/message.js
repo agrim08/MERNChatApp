@@ -18,6 +18,7 @@ const messageSchema = new Schema(
     },
     image: {
       type: String,
+      default: "",
     },
   },
   { timestamps: true }

@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const Message = require("../models/message");
-const { cloudinary_js_config: cloudinary } = require("../config/cloudinary");
+const cloudinary = require("../config/cloudinary");
 
 const getUsersForSideBar = async (req, res) => {
   try {
@@ -17,17 +17,21 @@ const getUsersForSideBar = async (req, res) => {
 
 const getMessages = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
-    const myId = req.user._id;
+    const { id: userToChatId } = req.params; // The ID of the user you want to chat with
+    const myId = req.user._id; // Your user ID from the auth middleware
+
+    // Ensure the user and recipient IDs are properly used in the query
     const messages = await Message.find({
       $or: [
-        { senderId: myId, recieverId: userToChatId },
-        { senderId: userToChatId, recieverId: myId },
+        { senderId: myId, receiverId: userToChatId }, // Fixed "recieverId" to "receiverId"
+        { senderId: userToChatId, receiverId: myId }, // Fixed "recieverId" to "receiverId"
       ],
     });
 
+    // Return the found messages
     res.status(200).json(messages);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -36,7 +40,7 @@ const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
     const { id: receiverId } = req.params;
-    const senderId = req.user._id;
+    const senderId = req.user?._id;
 
     if (!text && !image) {
       return res
@@ -44,26 +48,35 @@ const sendMessage = async (req, res) => {
         .json({ error: "Message must contain text or an image" });
     }
 
-    let imgUrl;
+    const receiver = await User.findById(receiverId);
+    if (!receiver) {
+      return res.status(404).json({ error: "Receiver not found" });
+    }
+
+    let imgUrl = null;
     if (image) {
       try {
-        const uploadResponse = await cloudinary.uploader.upload(image);
-        imgUrl = uploadResponse.secure_url;
+        const uploadResponse = await cloudinary?.uploader?.upload(image);
+        imgUrl = uploadResponse?.secure_url;
       } catch (err) {
-        return res.status(400).json({ error: "Image upload failed" });
+        console.error("Cloudinary upload error:", err);
+        return res.status(500).json({ error: "Image upload failed" });
       }
     }
+
     const newMessage = new Message({
       senderId,
       receiverId,
-      text,
+      text: text || null,
       image: imgUrl,
     });
 
-    //todo :realtime chat goes here
+    console.log("Saving message:", newMessage);
+
     await newMessage.save();
     res.status(201).json(newMessage);
   } catch (error) {
+    console.error("Error in sendMessage:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

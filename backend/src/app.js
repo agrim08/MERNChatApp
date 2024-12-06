@@ -5,8 +5,7 @@ const connectDb = require("./config/db");
 const cookieParser = require("cookie-parser");
 const messageRouter = require("./routes/message");
 const cors = require("cors");
-
-const app = express();
+const { app, server } = require("./config/socket");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -33,7 +32,7 @@ const PORT = process.env.PORT;
 app.use("/api/auth", authRouter);
 app.use("/api/message", messageRouter);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   try {
     console.log("server listening on port:" + PORT);
     connectDb();
