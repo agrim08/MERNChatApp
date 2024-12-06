@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -6,19 +6,34 @@ import MessageSkeleton from "../components/skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/userAuthStore";
 
 const ChatContainer = () => {
-  const { messages, getMessage, selectedUser, isMessageLoading } =
-    useChatStore();
-
   const { authUser } = useAuthStore();
+  const {
+    messages,
+    getMessage,
+    selectedUser,
+    isMessageLoading,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  } = useChatStore();
+
+  const messageEndRef = useRef(null);
 
   useEffect(() => {
-    if (selectedUser?._id) {
-      console.log("Selected User ID:", selectedUser._id);
-      getMessage(selectedUser._id);
-    } else {
-      console.log("Selected User is not set.");
+    getMessage(selectedUser._id);
+    subscribeToMessages();
+    return () => unsubscribeFromMessages();
+  }, [
+    selectedUser?._id,
+    getMessage,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
+
+  useEffect(() => {
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedUser?._id, getMessage]);
+  }, [messages]);
 
   if (isMessageLoading)
     return (
@@ -48,6 +63,7 @@ const ChatContainer = () => {
             className={`chat ${
               message.senderId === authUser._id ? "chat-end" : "chat-start"
             }`}
+            ref={messageEndRef}
             // ref={messageEndRef}
           >
             <div className=" chat-image avatar">
