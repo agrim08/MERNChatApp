@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const jwt = require("jsonwebtoken");
+import User from "../models/user";
+import jwt from "jsonwebtoken";
 const JWT_KEY = process.env.JWT_KEY;
 
 const protectAuth = async (req, res, next) => {

@@ -1,8 +1,8 @@
-const sharp = require("sharp");
-const User = require("../models/user");
-const Message = require("../models/message");
-const cloudinary = require("../config/cloudinary");
-const { getReceiverSocketId, io } = require("../config/socket");
+import sharp from "sharp";
+import User from "../models/user";
+import Message from "../models/message";
+import cloudinary from "../config/cloudinary";
+import { getReceiverSocketId, io } from "../config/socket";
 
 const getUsersForSideBar = async (req, res) => {
   try {

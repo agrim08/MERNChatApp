@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
-const validator = require("validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
+import mongoose, { Schema } from "mongoose";
+import validator from "validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 dotenv.config();
 const JWT_KEY = process.env.JWT_KEY;

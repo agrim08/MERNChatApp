@@ -1,10 +1,11 @@
-const express = require("express");
-const protectAuth = require("../middleware/protectAuth");
-const {
+import express from "express";
+import protectAuth from "../middleware/protectAuth";
+import {
   getUsersForSideBar,
   getMessages,
   sendMessage,
-} = require("../controllers/message");
+} from "../controllers/message";
+
 const router = express.Router();
 
 router.get("/users", protectAuth, getUsersForSideBar);

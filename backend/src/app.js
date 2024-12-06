@@ -1,12 +1,12 @@
-const express = require("express");
-const authRouter = require("./routes/auth");
-const dotenv = require("dotenv");
-const connectDb = require("./config/db");
-const cookieParser = require("cookie-parser");
-const messageRouter = require("./routes/message");
-const cors = require("cors");
-const { app, server } = require("./config/socket");
-const path = require("path");
+import express from "express";
+import authRouter from "./routes/auth.js";
+import dotenv from "dotenv";
+import connectDb from "./config/db.js";
+import cookieParser from "cookie-parser";
+import messageRouter from "./routes/message.js";
+import cors from "cors";
+import { app, server } from "./config/socket.js";
+import path from "path";
 
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
