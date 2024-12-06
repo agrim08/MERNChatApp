@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
+import imageCompression from "browser-image-compression";
 
 const MessageInput = () => {
   const { sendMessage } = useChatStore();
   const [imagePreview, setImagePreview] = useState(null);
-  const [text, setText] = useState(null);
+  const [text, setText] = useState("");
   const fileInputRef = useRef();
 
   const removeImage = () => {
@@ -14,36 +15,51 @@ const MessageInput = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleInputImage = (e) => {
+  const handleInputImage = async (e) => {
     const file = e.target.files[0];
     if (!file.type.startsWith("image/")) {
-      toast.error("please select an image file");
+      toast.error("Please select an image file");
       return;
     }
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+
+    try {
+      const options = {
+        maxSizeMB: 1, // Maximum size in MB
+        maxWidthOrHeight: 800, // Maximum width/height
+        useWebWorker: true, // Use a web worker for better performance
+      };
+
+      const compressedFile = await imageCompression(file, options);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result); // Set compressed image as base64
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error("Error compressing the image:", error);
+      toast.error("Image compression failed");
+    }
   };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    if (!text?.trim() && !imagePreview) return;
+    if (!text.trim() && !imagePreview) return;
 
     try {
       await sendMessage({
-        text: text?.trim(),
+        text: text.trim(),
         image: imagePreview,
       });
 
-      //clear form:
+      // Clear form
       setText("");
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error(error);
+      toast.error("Failed to send message");
     }
   };
 

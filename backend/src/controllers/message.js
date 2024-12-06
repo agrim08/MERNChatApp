@@ -1,3 +1,4 @@
+const sharp = require("sharp");
 const User = require("../models/user");
 const Message = require("../models/message");
 const cloudinary = require("../config/cloudinary");
@@ -57,10 +58,27 @@ const sendMessage = async (req, res) => {
     let imgUrl = null;
     if (image) {
       try {
-        const uploadResponse = await cloudinary?.uploader?.upload(image);
-        imgUrl = uploadResponse?.secure_url;
+        // Decode base64 string to buffer
+        const buffer = Buffer.from(image.split(",")[1], "base64");
+
+        // Compress image using sharp
+        const compressedImage = await sharp(buffer)
+          .resize(800) // Resize to a width of 800px (preserving aspect ratio)
+          .jpeg({ quality: 70 }) // Convert to JPEG with 70% quality
+          .toBuffer();
+
+        // Re-encode to base64 for uploading to Cloudinary
+        const compressedBase64 = `data:image/jpeg;base64,${compressedImage.toString(
+          "base64"
+        )}`;
+
+        // Upload compressed image to Cloudinary
+        const uploadResponse = await cloudinary.uploader.upload(
+          compressedBase64
+        );
+        imgUrl = uploadResponse.secure_url;
       } catch (err) {
-        console.error("Cloudinary upload error:", err);
+        console.error("Image processing/upload error:", err);
         return res.status(500).json({ error: "Image upload failed" });
       }
     }
@@ -79,7 +97,7 @@ const sendMessage = async (req, res) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
 
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage); // Emit new message event to the receiver socket room
+      io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
     res.status(201).json(newMessage);

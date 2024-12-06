@@ -6,9 +6,12 @@ const cookieParser = require("cookie-parser");
 const messageRouter = require("./routes/message");
 const cors = require("cors");
 const { app, server } = require("./config/socket");
+const path = require("path");
 
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -28,9 +31,18 @@ app.options("*", (req, res) => {
 dotenv.config();
 
 const PORT = process.env.PORT;
+const __dirname = path.resolve();
 
 app.use("/api/auth", authRouter);
 app.use("/api/message", messageRouter);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 server.listen(PORT, () => {
   try {
