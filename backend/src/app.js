@@ -28,6 +28,7 @@ app.options("*", (req, res) => {
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.sendStatus(204); // No Content
 });
+
 dotenv.config();
 
 const PORT = process.env.PORT;
