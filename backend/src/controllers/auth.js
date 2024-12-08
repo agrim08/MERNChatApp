@@ -54,22 +54,18 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    console.log("Request received with email:", email);
     const user = await User.findOne({ email: email });
     if (!user) {
-      console.log("User not found");
       return res.status(404).json({ error: "User not found" });
     }
-    console.log("User found, validating password");
+
     const isPasswordValid = await user.validatePassword(password);
 
     if (isPasswordValid) {
-      console.log("Password valid, generating token");
       const token = await user.getJwt();
       res.cookie("token", token);
       return res.send("login successful");
     } else {
-      console.log("Invalid Credentials");
       throw new Error("Invalid Credentials");
     }
   } catch (error) {
@@ -105,7 +101,6 @@ const updateProfile = async (req, res) => {
     );
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

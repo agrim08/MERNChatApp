@@ -25,15 +25,14 @@ const getMessages = async (req, res) => {
     // Ensure the user and recipient IDs are properly used in the query
     const messages = await Message.find({
       $or: [
-        { senderId: myId, receiverId: userToChatId }, // Fixed "recieverId" to "receiverId"
-        { senderId: userToChatId, receiverId: myId }, // Fixed "recieverId" to "receiverId"
+        { senderId: myId, receiverId: userToChatId },
+        { senderId: userToChatId, receiverId: myId },
       ],
     });
 
     // Return the found messages
     res.status(200).json(messages);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
