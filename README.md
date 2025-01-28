@@ -60,8 +60,8 @@ Ensure you have the following installed on your system:
 ## Folder Structure
 ```
 mern-chat-app/
-├── client/                # Frontend code
-├── server/                # Backend code
+├── frontend/                # Frontend code
+├── backend/                # Backend code
 ├── README.md              # Project documentation
 ```
 
